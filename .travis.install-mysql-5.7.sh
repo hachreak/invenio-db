@@ -6,6 +6,7 @@ if [ "$EXTRAS" = 'mysql' ]; then
   sudo dpkg --install mysql-apt-config_0.7.3-1_all.deb
   sudo apt-get update -q
   sudo apt-get install -q -y -o Dpkg::Options::=--force-confnew mysql-server
+  sudo service mysql restart
   sudo mysql_upgrade
   sudo service mysql restart
 fi

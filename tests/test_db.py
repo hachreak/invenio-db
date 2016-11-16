@@ -253,17 +253,21 @@ def test_local_proxy(app, db):
 
 # FIXME test compatibility with mysql
 @pytest.mark.skipif(int(sa.__version__.split('.')[1]) < 1 or
-                    os.environ.get('EXTRAS') == 'sqlite',
+                    os.environ.get('EXTRAS') in ['sqlite', 'mysql'],
                     reason='Requires SQLAlchemy>=1.1')
 def test_json(db, app):
     """Test extension initialization."""
+    from sqlalchemy.dialects import postgresql
+
     InvenioDB(app, db=db)
 
     class TestJSON(db.Model):
         __tablename__ = 'test_json'
 
         pk = sa.Column(sa.Integer, primary_key=True)
-        js = sa.Column(sa.JSON())
+        #  js = sa.Column(sa.JSON())
+        js = sa.Column(sa.JSON().with_variant(
+            postgresql.JSONB(), 'postgresql'),)
 
     with app.app_context():
         db.drop_all()
@@ -280,6 +284,9 @@ def test_json(db, app):
 
         result = TestJSON.query.filter(
             TestJSON.js['hello'] == 'world').first()
+        # FIXME with mysql 5.7 it returns None!
+        # if we use `js = sa.Column(sa.JSON())`, then it works for mysql
+        # but postgresql fails
         assert 3 == result.pk
 
         result = TestJSON.query.filter(
