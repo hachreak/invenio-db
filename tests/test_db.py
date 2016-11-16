@@ -280,6 +280,10 @@ def test_json(db, app):
         result = TestJSON.query.get(1)
         assert 1 == result.js['foo']['bar']
 
+        result = TestJSON.query.filter(
+            TestJSON.js['baz'].cast(Integer) == 2).first()
+        assert 2 == result.pk
+
         if hasattr(TestJSON.js['foo'], 'astext'):
             result = TestJSON.query.filter(
                 TestJSON.js[('foo', 'bar')].astext.cast(Integer) == 1
