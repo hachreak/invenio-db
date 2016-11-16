@@ -33,6 +33,7 @@ from conftest import ScriptInfo
 from mock import patch
 from pkg_resources import EntryPoint
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.types import Integer, String
 from werkzeug.utils import import_string
 
 from invenio_db import InvenioDB
@@ -275,10 +276,15 @@ def test_json(db, app):
     with app.app_context():
         db.session.add(TestJSON(pk=1, js={'foo': {'bar': 1}}))
         db.session.add(TestJSON(pk=2, js={'baz': 2}))
+        db.session.add(TestJSON(pk=3, js={'hello': 'world'}))
         db.session.commit()
 
         result = TestJSON.query.get(1)
         assert 1 == result.js['foo']['bar']
+
+        result = TestJSON.query.filter(
+            TestJSON.js['hello'].cast(String) == 'world').first()
+        assert 3 == result.pk
 
         result = TestJSON.query.filter(
             TestJSON.js['baz'].cast(Integer) == 2).first()
