@@ -251,8 +251,9 @@ def test_local_proxy(app, db):
         assert result == (True, True, True, True)
 
 
+# FIXME test compatibility with mysql
 @pytest.mark.skipif(int(sa.__version__.split('.')[1]) < 1 or
-                    os.environ.get('EXTRAS') == 'sqlite',
+                    os.environ.get('EXTRAS') in ['sqlite', 'mysql'],
                     reason='Requires SQLAlchemy>=1.1')
 def test_json(db, app):
     """Test extension initialization."""
