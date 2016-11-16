@@ -37,6 +37,7 @@ services:
 
 addons:
   postgresql: "9.4"
+  mysql: "5.7"
 
 env:
   - EXTRAS=sqlite REQUIREMENTS=lowest SQLALCHEMY_DATABASE_URI="sqlite:///test.db"
