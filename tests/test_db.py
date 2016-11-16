@@ -33,7 +33,6 @@ from conftest import ScriptInfo
 from mock import patch
 from pkg_resources import EntryPoint
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.types import Integer, String
 from werkzeug.utils import import_string
 
 from invenio_db import InvenioDB
@@ -251,8 +250,8 @@ def test_local_proxy(app, db):
         assert result == (True, True, True, True)
 
 
-#  @pytest.mark.skipif(not hasattr(sa, 'JSON'),
-#                      reason='Requires SQLAlchemy>=1.1.0b1')
+@pytest.mark.skipif(int(sa.__version__.split('.')[1]) < 1,
+                    reason='Requires SQLAlchemy>=1.1')
 def test_json(db, app):
     """Test extension initialization."""
     from sqlalchemy.dialects import mysql, postgresql
