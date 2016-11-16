@@ -251,8 +251,8 @@ def test_local_proxy(app, db):
         assert result == (True, True, True, True)
 
 
-@pytest.mark.skipif(not hasattr(sa, 'JSON'),
-                    reason='Requires SQLAlchemy>=1.1.0b1')
+#  @pytest.mark.skipif(not hasattr(sa, 'JSON'),
+#                      reason='Requires SQLAlchemy>=1.1.0b1')
 def test_json(db, app):
     """Test extension initialization."""
     from sqlalchemy.dialects import mysql, postgresql
@@ -283,24 +283,22 @@ def test_json(db, app):
         assert 1 == result.js['foo']['bar']
 
         result = TestJSON.query.filter(
-            TestJSON.js['hello'].cast(String) == 'world').first()
+            TestJSON.js['hello'] == 'world').first()
         assert 3 == result.pk
 
         result = TestJSON.query.filter(
-            TestJSON.js['baz'].cast(Integer) == 2).first()
+            TestJSON.js['baz'] == 2).first()
         assert 2 == result.pk
 
-        if hasattr(TestJSON.js['foo'], 'astext'):
-            result = TestJSON.query.filter(
-                TestJSON.js[('foo', 'bar')].astext.cast(Integer) == 1
-            ).first()
-            assert 1 == result.pk
+        result = TestJSON.query.filter(
+            TestJSON.js[('foo', 'bar')] == 1
+        ).first()
+        assert 1 == result.pk
 
-        if hasattr(TestJSON.js, 'has_key'):
-            result = TestJSON.query.filter(
-                TestJSON.js.has_key('baz')
-            ).first()
-            assert 2 == result.pk
+        result = TestJSON.query.filter(
+            TestJSON.js['foo']['bar'] == 1
+        ).first()
+        assert 1 == result.pk
 
     with app.app_context():
         db.drop_all()
