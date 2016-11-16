@@ -26,6 +26,7 @@
 
 from __future__ import absolute_import, print_function
 
+import os
 import pytest
 import sqlalchemy as sa
 from click.testing import CliRunner
@@ -250,7 +251,8 @@ def test_local_proxy(app, db):
         assert result == (True, True, True, True)
 
 
-@pytest.mark.skipif(int(sa.__version__.split('.')[1]) < 1,
+@pytest.mark.skipif(int(sa.__version__.split('.')[1]) < 1 or
+                    os.environ.get('EXTRAS') == 'sqlite',
                     reason='Requires SQLAlchemy>=1.1')
 def test_json(db, app):
     """Test extension initialization."""
