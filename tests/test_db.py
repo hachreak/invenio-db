@@ -253,7 +253,7 @@ def test_local_proxy(app, db):
 
 # FIXME test compatibility with mysql
 @pytest.mark.skipif(int(sa.__version__.split('.')[1]) < 1 or
-                    os.environ.get('EXTRAS') in ['sqlite', 'mysql'],
+                    os.environ.get('EXTRAS') in ['sqlite'],
                     reason='Requires SQLAlchemy>=1.1')
 def test_json(db, app):
     """Test extension initialization."""
@@ -265,9 +265,9 @@ def test_json(db, app):
         __tablename__ = 'test_json'
 
         pk = sa.Column(sa.Integer, primary_key=True)
-        #  js = sa.Column(sa.JSON())
-        js = sa.Column(sa.JSON().with_variant(
-            postgresql.JSONB(), 'postgresql'),)
+        js = sa.Column(sa.JSON())
+        #  js = sa.Column(sa.JSON().with_variant(
+        #      postgresql.JSONB(), 'postgresql'),)
 
     with app.app_context():
         db.drop_all()
